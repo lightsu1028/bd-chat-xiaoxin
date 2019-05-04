@@ -6,7 +6,9 @@ import com.em.model.UsersExample;
 import com.em.utils.AESUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.beans.Transient;
 import java.util.List;
 import java.util.UUID;
 
@@ -52,6 +54,18 @@ public class UsersService implements com.em.service.UsersService{
         List<Users> userResult = usersMapper.selectByExample(usersExample);
 
         return userResult.get(0);
+    }
+
+    @Transactional
+    @Override
+    public Users updateUserInfo(Users users) {
+        usersMapper.updateByPrimaryKeySelective(users);
+
+        return queryUsersInfo(users.getId());
+    }
+
+    private Users queryUsersInfo(String userId){
+        return usersMapper.selectByPrimaryKey(userId);
     }
 
 }

@@ -9,4 +9,6 @@ public interface UsersService {
     boolean getUserIsExist(String userName);
 
     Users getUserForLogin(Users users) throws Exception;
+
+    Users updateUserInfo(Users users);
 }

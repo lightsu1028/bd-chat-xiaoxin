@@ -14,6 +14,8 @@ import lombok.ToString;
 @ToString
 @EqualsAndHashCode
 public class UsersVo {
+    private  String id;
+
     private String username;
 
     private String password;

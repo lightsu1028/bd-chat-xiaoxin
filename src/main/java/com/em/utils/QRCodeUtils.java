@@ -23,7 +23,7 @@ import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 
 @Component
 public class QRCodeUtils {
-	
+
 	public void createQRCode(String filePath, String content) {
 		int width=300;      		//图片的宽度
         int height=300;     		//图片的高度
@@ -49,7 +49,7 @@ public class QRCodeUtils {
             e.printStackTrace();
         }
 	}
-	
+
 	public String getContentFromQRCode(String filePath) {
 		MultiFormatReader formatReader=new MultiFormatReader();
         File file=new File(filePath);

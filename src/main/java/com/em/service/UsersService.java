@@ -2,6 +2,9 @@ package com.em.service;
 
 
 import com.em.model.Users;
+import com.em.model.vo.FriendRequestVo;
+
+import java.util.List;
 
 public interface UsersService {
     Users add(Users user) throws Exception;
@@ -15,4 +18,8 @@ public interface UsersService {
     Integer preconditionSearchFriends(String myUserId,String friendUserName);
 
     Users queryUsersInfoByName(String userName);
+
+    void sendFriendRequest(String myUserId,String friendUserName);
+
+    List<FriendRequestVo> queryFriendRequestList(String receivedUserId);
 }

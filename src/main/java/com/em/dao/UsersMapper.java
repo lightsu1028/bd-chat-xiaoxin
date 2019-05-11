@@ -2,6 +2,7 @@ package com.em.dao;
 
 import com.em.model.Users;
 import com.em.model.UsersExample;
+import com.em.model.vo.FriendRequestVo;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -30,4 +31,6 @@ public interface UsersMapper {
     int updateByPrimaryKeySelective(Users record);
 
     int updateByPrimaryKey(Users record);
+
+    List<FriendRequestVo> selectFriendRequestList(String myUserId);
 }

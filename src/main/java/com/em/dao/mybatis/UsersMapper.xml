@@ -72,6 +72,19 @@
   <sql id="Base_Column_List" >
     id, username, password, face_image, face_image_big, nickname, qrcode, cid
   </sql>
+  <!--Lubaikang-->
+  <select id="selectFriendRequestList" parameterType="string" resultType="com.em.model.vo.FriendRequestVo">
+      select
+        u.id as sendUserId,
+        u.username as sendUserName,
+        u.face_image as sendUserFaceImage,
+        u.nickname as sendUserNickName
+      from  friends_request fr
+      left join users u
+      on fr.send_user_id=u.id
+      where fr.accept_user_id=#{myUserId}
+  </select>
+
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.em.model.UsersExample" >
     select
     <if test="distinct" >

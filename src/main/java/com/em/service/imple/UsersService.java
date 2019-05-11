@@ -1,9 +1,11 @@
 package com.em.service.imple;
 
+import com.em.dao.FriendsRequestMapper;
 import com.em.dao.MyFriendsMapper;
 import com.em.dao.UsersMapper;
 import com.em.model.*;
 import com.em.model.enums.SearchFriendsStatusEnum;
+import com.em.model.vo.FriendRequestVo;
 import com.em.utils.AESUtil;
 import com.em.utils.FastDFSClient;
 import com.em.utils.FileUtils;
@@ -14,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.beans.Transient;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -36,6 +39,9 @@ public class UsersService implements com.em.service.UsersService{
 
     @Autowired
     private MyFriendsMapper myFriendsMapper;
+
+    @Autowired
+    private FriendsRequestMapper friendsRequestMapper;
 
     @Override
     public Users add(Users user) throws Exception {
@@ -131,6 +137,30 @@ public class UsersService implements com.em.service.UsersService{
     public static void main(String[] args) {
         String s = UUID.randomUUID().toString();
         System.out.println(s);
+    }
+
+    public void sendFriendRequest(String myUserId,String friendUserName){
+        //根据用户名查询还有信息
+       Users friend = queryUsersInfoByName(friendUserName);
+        //1.查询发送好友请求记录表
+        FriendsRequestExample fre = new FriendsRequestExample();
+        FriendsRequestExample.Criteria criteria = fre.createCriteria();
+        criteria.andSendUserIdEqualTo(myUserId);
+        criteria.andAcceptUserIdEqualTo(friend.getId());
+        List<FriendsRequest> friendsRequests = friendsRequestMapper.selectByExample(fre);
+        if(friendsRequests==null||friendsRequests.size()==0){
+            //2.如果不是你的好友，并且好友记录没有添加，新增好友请求记录
+            FriendsRequest friendsRequest = new FriendsRequest();
+            friendsRequest.setId(UUID.randomUUID().toString());
+            friendsRequest.setSendUserId(myUserId);
+            friendsRequest.setAcceptUserId(friend.getId());
+            friendsRequest.setRequestDateTime(new Date());
+            friendsRequestMapper.insert(friendsRequest);
+        }
+    }
+
+    public List<FriendRequestVo> queryFriendRequestList(String receivedUserId){
+        return usersMapper.selectFriendRequestList(receivedUserId);
     }
 
 }

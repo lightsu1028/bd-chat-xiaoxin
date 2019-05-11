@@ -45,11 +45,12 @@ public enum RspCode {
     INVALID_AUTHCODE("444", "无访问权限"),
     
     /** 未知错误 */
-    UNKNOWN_ERROR("499", "未知错误");
-	
+    UNKNOWN_ERROR("499", "未知错误"),
+
+    ADD_USER_FAIL("405","查询添加好友失败");
 	
     
-    private RspCode(String code, String message) {
+     RspCode(String code, String message) {
         this.code = code;
         this.message = message;
     }

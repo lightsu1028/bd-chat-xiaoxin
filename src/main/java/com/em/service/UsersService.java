@@ -11,4 +11,8 @@ public interface UsersService {
     Users getUserForLogin(Users users) throws Exception;
 
     Users updateUserInfo(Users users);
+
+    Integer preconditionSearchFriends(String myUserId,String friendUserName);
+
+    Users queryUsersInfoByName(String userName);
 }

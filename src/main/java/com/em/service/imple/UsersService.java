@@ -1,8 +1,9 @@
 package com.em.service.imple;
 
+import com.em.dao.MyFriendsMapper;
 import com.em.dao.UsersMapper;
-import com.em.model.Users;
-import com.em.model.UsersExample;
+import com.em.model.*;
+import com.em.model.enums.SearchFriendsStatusEnum;
 import com.em.utils.AESUtil;
 import com.em.utils.FastDFSClient;
 import com.em.utils.FileUtils;
@@ -31,6 +32,10 @@ public class UsersService implements com.em.service.UsersService{
 
     @Autowired
     FastDFSClient fastDFSClient;
+
+
+    @Autowired
+    private MyFriendsMapper myFriendsMapper;
 
     @Override
     public Users add(Users user) throws Exception {
@@ -88,6 +93,44 @@ public class UsersService implements com.em.service.UsersService{
 
     private Users queryUsersInfo(String userId){
         return usersMapper.selectByPrimaryKey(userId);
+    }
+
+    /**
+     *  添加好友前置条件
+     */
+   public Integer preconditionSearchFriends(String myUserId,String friendUserName){
+       Users users = queryUsersInfoByName(friendUserName);
+       if(users==null){
+           return SearchFriendsStatusEnum.USER_NOT_EXIST.status;
+       }else{
+           if(users.getId().equals(myUserId)){
+               return SearchFriendsStatusEnum.NOT_YOURSELF.status;
+           }
+           MyFriendsExample mf = new MyFriendsExample();
+           MyFriendsExample.Criteria criteria = mf.createCriteria();
+           criteria.andMyFriendUserIdEqualTo(users.getId());
+           criteria.andMyUserIdEqualTo(myUserId);
+           List<MyFriends> myFriends = myFriendsMapper.selectByExample(mf);
+           if(myFriends!=null&&myFriends.size()>0){
+               return SearchFriendsStatusEnum.ALREADY_FRIENDS.status;
+           }else{
+               return SearchFriendsStatusEnum.SUCCESS.status;
+           }
+       }
+   }
+
+   public Users queryUsersInfoByName(String userName){
+       UsersExample example =new UsersExample();
+       UsersExample.Criteria criteria = example.createCriteria();
+       criteria.andUsernameEqualTo(userName);
+       List<Users> users = usersMapper.selectByExample(example);
+
+       return users.size()>0?users.get(0):null;
+   }
+
+    public static void main(String[] args) {
+        String s = UUID.randomUUID().toString();
+        System.out.println(s);
     }
 
 }

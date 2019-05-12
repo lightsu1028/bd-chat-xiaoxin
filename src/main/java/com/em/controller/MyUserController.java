@@ -31,6 +31,8 @@ public class MyUserController extends BaseController {
     @Autowired
     private MyFriendsService myFriendsService;
 
+
+
     @RequestMapping("/search")
     public Result searchUser(@RequestBody JSONObject params) throws Exception {
 
@@ -103,7 +105,11 @@ public class MyUserController extends BaseController {
         }else{//忽略操作
             usersService.deleteFriendRequest(sendUserId,acceptUserId);
         }
-        return new Result();
+
+        //数据库查询好友列表
+        List<MyFriendsVo> myFriendsVos = myFriendsService.queryMyFriends(acceptUserId);
+
+        return new Result(myFriendsVos);
     }
 
     @RequestMapping("/myFriends")

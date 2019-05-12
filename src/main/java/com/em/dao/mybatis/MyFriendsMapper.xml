@@ -67,6 +67,18 @@
   <sql id="Base_Column_List" >
     id, my_user_id, my_friend_user_id
   </sql>
+
+  <select id="getMyFriensInfo" parameterType="string" resultType="com.em.model.vo.MyFriendsVo">
+    select
+      u.id as friendUserId,
+      u.username as friendUserName,
+      u.face_image as friendUserImage,
+      u.nickname as friendUserNickName
+    from  my_friends mf
+    join users u
+    on mf.my_friend_user_id = u.id
+    where mf.my_user_id=#{myUserId}
+  </select>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.em.model.MyFriendsExample" >
     select
     <if test="distinct" >

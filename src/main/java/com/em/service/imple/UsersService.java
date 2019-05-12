@@ -6,6 +6,7 @@ import com.em.dao.UsersMapper;
 import com.em.model.*;
 import com.em.model.enums.SearchFriendsStatusEnum;
 import com.em.model.vo.FriendRequestVo;
+import com.em.model.vo.MyFriendsVo;
 import com.em.utils.AESUtil;
 import com.em.utils.FastDFSClient;
 import com.em.utils.FileUtils;
@@ -15,7 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.beans.Transient;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -161,6 +162,31 @@ public class UsersService implements com.em.service.UsersService{
 
     public List<FriendRequestVo> queryFriendRequestList(String receivedUserId){
         return usersMapper.selectFriendRequestList(receivedUserId);
+    }
+
+    public void deleteFriendRequest(String sendUserId,String acceptUserId){
+        FriendsRequestExample fre = new FriendsRequestExample();
+        FriendsRequestExample.Criteria criteria = fre.createCriteria();
+        criteria.andSendUserIdEqualTo(sendUserId);
+        criteria.andAcceptUserIdEqualTo(acceptUserId);
+        friendsRequestMapper.deleteByExample(fre);
+    }
+
+    @Transactional
+    public void passFriendRequest(String sendUserId,String acceptUserId){
+        //双向保存朋友之间关系
+        saveFriendsRelation(sendUserId,acceptUserId);
+        saveFriendsRelation(acceptUserId,sendUserId);
+
+        deleteFriendRequest(sendUserId, acceptUserId);
+    }
+
+    public void saveFriendsRelation(String userId,String friendId){
+        MyFriends myFriends = new MyFriends();
+        myFriends.setId(UUID.randomUUID().toString());
+        myFriends.setMyFriendUserId(friendId);
+        myFriends.setMyUserId(userId);
+        myFriendsMapper.insert(myFriends);
     }
 
 }

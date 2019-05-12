@@ -22,4 +22,9 @@ public interface UsersService {
     void sendFriendRequest(String myUserId,String friendUserName);
 
     List<FriendRequestVo> queryFriendRequestList(String receivedUserId);
+
+    void deleteFriendRequest(String sendUserId,String acceptUserId);
+
+    void passFriendRequest(String sendUserId,String acceptUserId);
+
 }

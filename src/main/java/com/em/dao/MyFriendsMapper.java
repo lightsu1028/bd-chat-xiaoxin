@@ -2,6 +2,7 @@ package com.em.dao;
 
 import com.em.model.MyFriends;
 import com.em.model.MyFriendsExample;
+import com.em.model.vo.MyFriendsVo;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -28,4 +29,7 @@ public interface MyFriendsMapper {
     int updateByPrimaryKeySelective(MyFriends record);
 
     int updateByPrimaryKey(MyFriends record);
+
+    List<MyFriendsVo> getMyFriensInfo(String myUserId);
+
 }

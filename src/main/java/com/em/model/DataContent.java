@@ -1,18 +1,14 @@
 package com.em.model;
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
 
-@Getter
-@Setter
-@ToString
-@EqualsAndHashCode
-public class DataContent {
+import com.em.model.vo.ChatMsg;
+
+import java.io.Serializable;
+
+public class DataContent implements Serializable{
 
     private Integer action; //动作类型
-    private ChatMsg chatMsg; //用户的聊天内容entity
+    private com.em.model.vo.ChatMsg chatMsg; //用户的聊天内容entity
     private String extand; //扩展字段
 
     public Integer getAction() {

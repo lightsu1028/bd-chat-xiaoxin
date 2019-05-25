@@ -1,10 +1,11 @@
 package com.em.netty;
 
 import com.alibaba.fastjson.JSON;
-import com.em.model.ChatMsg;
+import com.em.model.vo.ChatMsg;
 import com.em.model.DataContent;
 import com.em.model.enums.MsgActionEnum;
-import com.em.service.ChatMsgService;
+import com.em.service.ChatMessageService;
+import com.em.utils.JsonUtils;
 import com.em.utils.SpringContextUtil;
 import com.em.utils.UserChannelRel;
 import io.netty.channel.Channel;
@@ -35,12 +36,13 @@ public class TextWebSocketFrameHandler extends SimpleChannelInboundHandler<TextW
         //1.获取客户端发来的消息
         String text = msg.text();
 //        DataContent dc =(DataContent) JSON.parse(text);
-        DataContent dc = JSON.parseObject(text,DataContent.class);
+//        DataContent dc = JSON.parseObject(text,DataContent.class);
+        DataContent dc = JsonUtils.jsonToPojo(text,DataContent.class);
         ChatMsg chatMsg = dc.getChatMsg();
         Integer action = dc.getAction();
         if(action.equals(MsgActionEnum.CONNECT.type) ){
             //2.当websocket第一次open的时候，初始化channel，关联userid
-            String sendUserId = chatMsg.getSendUserId();
+            String sendUserId = chatMsg.getSenderId();
             UserChannelRel.put(sendUserId,currentChannel);
 
             //测试
@@ -49,11 +51,11 @@ public class TextWebSocketFrameHandler extends SimpleChannelInboundHandler<TextW
             UserChannelRel.output();
         }else if(MsgActionEnum.CHAT.type.equals(action)){
             //保存聊天信息记录
-            ChatMsgService msgService = SpringContextUtil.getBean("chatMsgService");
+            ChatMessageService msgService = SpringContextUtil.getBean("chatMessageService");
             String msgId = msgService.saveMsg(chatMsg);
-            chatMsg.setId(msgId);
+            chatMsg.setMsgId(msgId);
 
-            Channel receiveChannel = UserChannelRel.get(chatMsg.getAcceptUserId());
+            Channel receiveChannel = UserChannelRel.get(chatMsg.getReceiverId());
             if(receiveChannel==null){
                 //todo 推送
             }else{
@@ -67,7 +69,7 @@ public class TextWebSocketFrameHandler extends SimpleChannelInboundHandler<TextW
                 }
             }
         }else if(MsgActionEnum.SIGNED.type.equals(action)){
-            ChatMsgService msgService = SpringContextUtil.getBean("chatMsgService");
+           ChatMessageService msgService = SpringContextUtil.getBean("chatMessageService");
 
             //签收消息类型，修改数据库中具体的对应消息的签收状态【已签收】
             String msgIds = dc.getExtand();
@@ -100,6 +102,7 @@ public class TextWebSocketFrameHandler extends SimpleChannelInboundHandler<TextW
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
         System.out.println("异常发生");
+        System.out.println(cause.getMessage());
         ctx.channel().close();
     }
 }

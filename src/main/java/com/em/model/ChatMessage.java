@@ -2,7 +2,7 @@ package com.em.model;
 
 import java.util.Date;
 
-public class ChatMsg {
+public class ChatMessage {
     private String id;
 
     private String sendUserId;

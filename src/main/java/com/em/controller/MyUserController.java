@@ -10,7 +10,6 @@ import com.em.model.vo.MyFriendsVo;
 import com.em.model.vo.UsersVo;
 import com.em.service.MyFriendsService;
 import com.em.service.UsersService;
-import com.em.service.imple.MyFriendsServiceImpl;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;

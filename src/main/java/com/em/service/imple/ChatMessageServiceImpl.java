@@ -2,6 +2,7 @@ package com.em.service.imple;
 
 import com.em.dao.ChatMessageMapper;
 import com.em.model.ChatMessage;
+import com.em.model.ChatMessageExample;
 import com.em.model.enums.MsgSignFLagEnum;
 import com.em.model.vo.ChatMsg;
 import com.em.service.ChatMessageService;
@@ -35,11 +36,20 @@ public class ChatMessageServiceImpl implements ChatMessageService {
 
     @Override
     public void updateMsgIsSigned(String msgId) {
+//        ChatMessage msg = new ChatMessage();
+//        msg.setId(msgId);
+//        msg.setSignFlag(MsgSignFLagEnum.signed.type);
+//
+//        messageMapper.updateByPrimaryKey(msg);
+
+        ChatMessageExample msgExample = new ChatMessageExample();
+        ChatMessageExample.Criteria criteria = msgExample.createCriteria();
+        criteria.andIdEqualTo(msgId);
+
         ChatMessage msg = new ChatMessage();
-        msg.setId(msgId);
         msg.setSignFlag(MsgSignFLagEnum.signed.type);
 
-        messageMapper.updateByPrimaryKey(msg);
+        messageMapper.updateByExampleSelective(msg,msgExample);
     }
 
 

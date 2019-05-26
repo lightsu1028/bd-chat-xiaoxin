@@ -4,13 +4,13 @@ import com.em.dao.FriendsRequestMapper;
 import com.em.dao.MyFriendsMapper;
 import com.em.dao.UsersMapper;
 import com.em.model.*;
+import com.em.model.enums.MsgActionEnum;
 import com.em.model.enums.SearchFriendsStatusEnum;
 import com.em.model.vo.FriendRequestVo;
 import com.em.model.vo.MyFriendsVo;
-import com.em.utils.AESUtil;
-import com.em.utils.FastDFSClient;
-import com.em.utils.FileUtils;
-import com.em.utils.QRCodeUtils;
+import com.em.utils.*;
+import io.netty.channel.Channel;
+import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -179,6 +179,14 @@ public class UsersService implements com.em.service.UsersService{
         saveFriendsRelation(acceptUserId,sendUserId);
 
         deleteFriendRequest(sendUserId, acceptUserId);
+
+        //websocket发送消息通知请求方更新好友列表
+        Channel senderChannel = UserChannelRel.get(sendUserId);
+        if(senderChannel!=null){
+            DataContent dataContent = new DataContent();
+            dataContent.setAction(MsgActionEnum.PULL_FRIEND.type);
+            senderChannel.writeAndFlush(new TextWebSocketFrame(JsonUtils.objectToJson(dataContent)));
+        }
     }
 
     public void saveFriendsRelation(String userId,String friendId){

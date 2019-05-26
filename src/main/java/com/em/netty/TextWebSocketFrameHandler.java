@@ -54,6 +54,8 @@ public class TextWebSocketFrameHandler extends SimpleChannelInboundHandler<TextW
             ChatMessageService msgService = SpringContextUtil.getBean("chatMessageService");
             String msgId = msgService.saveMsg(chatMsg);
             chatMsg.setMsgId(msgId);
+            DataContent dataContent = new DataContent();
+            dataContent.setChatMsg(chatMsg);
 
             Channel receiveChannel = UserChannelRel.get(chatMsg.getReceiverId());
             if(receiveChannel==null){
@@ -65,7 +67,7 @@ public class TextWebSocketFrameHandler extends SimpleChannelInboundHandler<TextW
                     //todo 推送
                 }else{
                     //用户在线
-                    channel.writeAndFlush(new TextWebSocketFrame(JSON.toJSONString(chatMsg)));
+                    channel.writeAndFlush(new TextWebSocketFrame(JSON.toJSONString(dataContent)));
                 }
             }
         }else if(MsgActionEnum.SIGNED.type.equals(action)){

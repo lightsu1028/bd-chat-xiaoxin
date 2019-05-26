@@ -111,6 +111,11 @@ public class MyUserController extends BaseController {
         return new Result(myFriendsVos);
     }
 
+    /**
+     *  获取通讯录好友
+     * @param params
+     * @return
+     */
     @RequestMapping("/myFriends")
     public Result myFriends(@RequestBody JSONObject params){
         String userId = params.getString("userId");

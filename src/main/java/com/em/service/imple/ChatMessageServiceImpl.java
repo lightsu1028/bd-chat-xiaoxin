@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 @Service("chatMessageService")
@@ -50,6 +51,23 @@ public class ChatMessageServiceImpl implements ChatMessageService {
         msg.setSignFlag(MsgSignFLagEnum.signed.type);
 
         messageMapper.updateByExampleSelective(msg,msgExample);
+    }
+
+    /**
+     *  获取用户
+     * @param receiveId
+     * @return
+     */
+    @Override
+    public List<ChatMessage> getUnReadMessage(String receiveId){
+
+        ChatMessageExample msgExample = new ChatMessageExample();
+        ChatMessageExample.Criteria criteria = msgExample.createCriteria();
+        criteria.andAcceptUserIdEqualTo(receiveId);
+        criteria.andSignFlagEqualTo(0);
+        msgExample.setOrderByClause("create_time asc");
+        List<ChatMessage> chatMessages = messageMapper.selectByExample(msgExample);
+        return chatMessages;
     }
 
 

@@ -3,11 +3,13 @@ package com.em.controller;
 import com.alibaba.fastjson.JSONObject;
 import com.em.common.Result;
 import com.em.common.RspCode;
+import com.em.model.ChatMessage;
 import com.em.model.Users;
 import com.em.model.enums.OperatorFriendRequestTypeEnum;
 import com.em.model.enums.SearchFriendsStatusEnum;
 import com.em.model.vo.MyFriendsVo;
 import com.em.model.vo.UsersVo;
+import com.em.service.ChatMessageService;
 import com.em.service.MyFriendsService;
 import com.em.service.UsersService;
 import org.apache.commons.beanutils.BeanUtils;
@@ -29,6 +31,9 @@ public class MyUserController extends BaseController {
 
     @Autowired
     private MyFriendsService myFriendsService;
+
+    @Autowired
+    private ChatMessageService messageService;
 
 
 
@@ -124,5 +129,17 @@ public class MyUserController extends BaseController {
         }
         List<MyFriendsVo> myFriendsVos = myFriendsService.queryMyFriends(userId);
         return new Result(myFriendsVos);
+    }
+
+    /**
+     *  获取未签收的消息
+     * @param params
+     * @return
+     */
+    @RequestMapping("/getUnReadMessage")
+    public Result getUnReadMessage(@RequestBody JSONObject params){
+        String receiveUserId = params.getString("receiveUserId");
+        List<ChatMessage> unReadMessage = messageService.getUnReadMessage(receiveUserId);
+        return new Result(unReadMessage);
     }
 }
